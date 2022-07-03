@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import { getFirestore, serverTimestamp } from "firebase/firestore/lite";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -13,11 +13,13 @@ const firebaseConfig = {
   measurementId: "G-GX2FDHESE5",
 };
 
-const app = initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 
+//to get data from Collection
 const projectFirestore = getFirestore(app);
 
-const projectAuth = getAuth();
+//to get data from Auth
+const projectAuth = firebase.auth();
 
 const timeServer = serverTimestamp();
 

@@ -29,11 +29,21 @@
         />
       </div>
       <button
+        v-if="isPending == false"
         @click="onSubmit"
         class="px-10 py-3 bg-blue-700 text-white rounded-md mt-5"
       >
         Sign Up
       </button>
+      <button
+        v-if="isPending == true"
+        class="px-10 py-3 bg-black text-white rounded-md mt-5"
+      >
+        Registing...
+      </button>
+      <p v-if="error == null && user != null" class="text-orange-500">
+        Register success.
+      </p>
     </from>
     <div class="text-center font-bold mt-3">
       <span>I'm already a member.</span>
@@ -43,9 +53,8 @@
 </template>
 <script lang="ts">
 import BrandLogo from "@/components/BrandLogo.vue";
-import { projectFirestore, timeServer } from "../config/firebase";
-import { collection, Firestore, getDocs } from "firebase/firestore";
 import { ref } from "vue";
+import { useSignUp } from "@/composables/useSignUp";
 
 export default {
   components: {
@@ -56,24 +65,25 @@ export default {
     const email = ref("");
     const password = ref("");
 
-    async function testFirebase(db: Firestore) {
-      const citiesCol = collection(db, "transactions");
-      const citySnapshot = await getDocs(citiesCol);
-      let data: any;
-      let id = "";
-      const cityList = citySnapshot.docs.map(
-        (doc) => ((data = doc.data()), (id = doc.id))
-      );
-      return { ...data, id: id };
-    }
+    const { error, isPending, result, signup } = useSignUp();
+    // async function testFirebase(db: Firestore) {
+    //   const citiesCol = collection(db, "transactions");
+    //   const citySnapshot = await getDocs(citiesCol);
+    //   let data: any;
+    //   let id = "";
+    //   const cityList = citySnapshot.docs.map(
+    //     (doc) => ((data = doc.data()), (id = doc.id))
+    //   );
+    //   return { ...data, id: id };
+    // }
     // console.log(testFirebase(projectFirestore));
     // console.log(timeServer);
 
-    function onSubmit() {
-      console.log(fullName, email, password);
+    async function onSubmit() {
+      const res = await signup(email.value, password.value, fullName.value);
+      console.log(error);
     }
-
-    return { onSubmit, fullName, email, password };
+    return { onSubmit, fullName, email, password, error, isPending };
   },
 };
 </script>
